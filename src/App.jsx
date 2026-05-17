@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-
+// Board columns used to organize job applications by status
 const columns = [
   "wishlist",
   "applied",
@@ -14,7 +14,7 @@ function App() {
   const [jobs, setjobs] = useState([]);
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">DevBoard 🚀</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">DevBoard 🚀 Job Tracker</h1>
        
       <button
          onClick={() => {
