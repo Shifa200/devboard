@@ -12,19 +12,62 @@ const columns = [
 
 function App() {
   const [jobs, setjobs] = useState([]);
+  const [form, setForm] = useState({
+  company: "",
+  role: "",
+  status: "wishlist",
+});
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">DevBoard 🚀 Job Tracker</h1>
-       
+       <div className= "mb-6 flex gap-3 items-center flex-wrap">
+        <input 
+          type="text"
+          placeholder="Company"
+          value={form.company}
+          onChange={(e) =>
+            setForm({ ...form, company: e.target.value })
+          }
+          className="border p-2 rounded"
+        />
+
+         <input
+            type="text"
+            placeholder="Role"
+            value={form.role}
+            onChange={(e) =>
+              setForm({ ...form, role: e.target.value })
+            }
+            className="border p-2 rounded"
+          />
+           <select
+              value={form.status}
+              onChange={(e) =>
+                setForm({ ...form, status: e.target.value })
+              }
+              className="border p-2 rounded"
+            >
+              {columns.map((col) => (
+                <option key={col} value={col}>
+                  {col}
+                </option>
+              ))}
+            </select>6
+       </div>
       <button
          onClick={() => {
           const newJob = {
             id: Date.now(),
-            company: "New Company",
-            role: "Frontend Dev",
-            status: "wishlist",
+            ...form,
           };
           setjobs([...jobs, newJob])
+
+          setForm({
+            company: "",
+            role: "",
+            status: "wishlist",
+          });
+    
          }}
          className= "mb-4 bg-blue-500 text-white px-4 py-2 rounded"
          >
