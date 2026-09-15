@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { DndContext } from "@dnd-kit/core";
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -53,7 +52,7 @@ function App() {
                   {col}
                 </option>
               ))}
-            </select>6
+            </select>
        </div>
       <button
          onClick={() => {
@@ -75,8 +74,6 @@ function App() {
           + Add Job
          </button>
 
-
-     <DndContext>
       <div className="flex gap-4 overflow-x-auto">
         {columns.map((col) => (
           <div key={col} className="bg-white p-4 rounded shadow min-w-[200px]">
@@ -98,7 +95,6 @@ function App() {
           </div>
         ))}
       </div>
-    </DndContext>
     </div>
   );
 }
