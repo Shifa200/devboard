@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { DndContext } from "@dnd-kit/core";
+import JobCard from "./components/JobCard";
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -73,7 +75,7 @@ function App() {
          >
           + Add Job
          </button>
-
+     <DndContext>
       <div className="flex gap-4 overflow-x-auto">
         {columns.map((col) => (
           <div key={col} className="bg-white p-4 rounded shadow min-w-[200px]">
@@ -83,18 +85,14 @@ function App() {
               {jobs
                 .filter((job) => job.status === col)
                 .map((job) => (
-                  <div
-                    key={job.id}
-                    classname = "bg-gray-200 p-2 rounded text-sm"
-                  >
-                    {job.company} - {job.role}
-                  </div>
+                  <JobCard key={job.id} job={job} />
                 ))
               }
             </div>
           </div>
         ))}
       </div>
+    </DndContext>
     </div>
   );
 }
