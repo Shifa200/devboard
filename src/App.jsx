@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DndContext } from "@dnd-kit/core";
-import JobCard from "./components/JobCard";
+import Column from "./components/Column";
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -13,12 +13,29 @@ const columns = [
 ];
 
 function App() {
-  const [jobs, setjobs] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [form, setForm] = useState({
   company: "",
   role: "",
   status: "wishlist",
 });
+
+  const handleDragEnd = ({ active, over }) => {
+  if (!over) {
+    return;
+  }
+
+  const newStatus = over.id;
+
+  setJobs((currentJobs) =>
+    currentJobs.map((job) =>
+      job.id === active.id
+        ? { ...job, status: newStatus }
+        : job
+    )
+  );
+};
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">DevBoard 🚀 Job Tracker</h1>
@@ -62,7 +79,7 @@ function App() {
             id: Date.now(),
             ...form,
           };
-          setjobs([...jobs, newJob])
+          setJobs([...jobs, newJob])
 
           setForm({
             company: "",
@@ -75,24 +92,17 @@ function App() {
          >
           + Add Job
          </button>
-     <DndContext>
-      <div className="flex gap-4 overflow-x-auto">
-        {columns.map((col) => (
-          <div key={col} className="bg-white p-4 rounded shadow min-w-[200px]">
-            <h2 className="font-semibold capitalize mb-3">{col}</h2>
-
-            <div className="space-y-2">
-              {jobs
-                .filter((job) => job.status === col)
-                .map((job) => (
-                  <JobCard key={job.id} job={job} />
-                ))
-              }
-            </div>
-          </div>
-        ))}
-      </div>
-    </DndContext>
+     <DndContext onDragEnd={handleDragEnd}>
+  <div className="flex gap-4 overflow-x-auto">
+    {columns.map((col) => (
+      <Column
+        key={col}
+        column={col}
+        jobs={jobs.filter((job) => job.status === col)}
+      />
+    ))}
+  </div>
+</DndContext>
     </div>
   );
 }
