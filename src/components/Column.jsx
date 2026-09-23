@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import JobCard from "./JobCard";
 
-function Column({ column, jobs }) {
+function Column({ column, jobs, onDelete }) {
   const { setNodeRef, isOver } = useDroppable({
     id: column,
   });
@@ -19,7 +19,11 @@ function Column({ column, jobs }) {
 
       <div className="space-y-3">
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobCard 
+           key={job.id}
+           job={job}
+           onDelete={onDelete}
+            />
         ))}
       </div>
     </div>

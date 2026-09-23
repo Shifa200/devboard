@@ -1,6 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 
-function JobCard({ job }) {
+function JobCard({ job, onDelete }) {
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
       id: job.id,
@@ -8,7 +8,7 @@ function JobCard({ job }) {
 
   const style = transform
     ? {
-        transform: `translate(${transform.x}px, ${transform.y}px)`,
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
 
@@ -16,11 +16,33 @@ function JobCard({ job }) {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
       {...attributes}
-      className="bg-gray-200 p-2 rounded text-sm cursor-grab"
+      {...listeners}
+      className="relative rounded-lg border bg-white p-4 shadow-sm cursor-grab"
     >
-      {job.company} — {job.role}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="font-semibold text-gray-900">
+            {job.company}
+          </h3>
+
+          <p className="mt-1 text-sm text-gray-500">
+            {job.role}
+          </p>
+        </div>
+
+        <button
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(job.id);
+          }}
+          className="text-gray-400 hover:text-red-500 text-lg"
+          title="Delete job"
+        >
+          ⋮
+        </button>
+      </div>
     </div>
   );
 }
