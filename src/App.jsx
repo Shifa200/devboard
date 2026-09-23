@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import Column from "./components/Column";
+
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -13,7 +14,17 @@ const columns = [
 ];
 
 function App() {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(() => {
+    const savedJobs= localStorage.getItem("devboard-jobs");
+
+    return savedJobs ? JSON.parse(savedJobs) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("devboard-jobs", JSON.stringify(jobs));
+  },[jobs]);
+
+  
   const [form, setForm] = useState({
   company: "",
   role: "",
@@ -108,3 +119,6 @@ function App() {
 }
 
 export default App;
+
+
+
