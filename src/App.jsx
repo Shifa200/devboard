@@ -24,7 +24,7 @@ function App() {
     localStorage.setItem("devboard-jobs", JSON.stringify(jobs));
   },[jobs]);
 
-  
+
   const [form, setForm] = useState({
   company: "",
   role: "",
@@ -86,6 +86,11 @@ function App() {
        </div>
       <button
          onClick={() => {
+          if (!form.company.trim() || !form.role.trim()) {
+            alert("Please enter both company name and job role.");
+            return;
+          }
+          
           const newJob = {
             id: Date.now(),
             ...form,
