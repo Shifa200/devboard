@@ -47,6 +47,8 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [statusFilter, setStatusFilter] = useState("all");
+
   // Fill the form with the selected job when editing
   const handleEditJob = (job) => {
     setForm({
@@ -174,15 +176,21 @@ function App() {
     handleCancelEdit();
   };
 
-  const filteredJobs = jobs.filter((job) => {
-    const search = searchTerm.toLowerCase();
+ const filteredJobs = jobs.filter((job) => {
+  const search = searchTerm.toLowerCase();
 
-    return (
-      job.company.toLowerCase().includes(search) ||
-      job.role.toLowerCase().includes(search)
-    );
-  });
+  const matchesSearch =
+    job.company.toLowerCase().includes(search) ||
+    job.role.toLowerCase().includes(search);
 
+  const matchesStatus =
+    statusFilter === "all" ||
+    job.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+
+  
+});
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       {toast && (
@@ -335,8 +343,9 @@ function App() {
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="relative max-w-md">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+          {/* Search */}
+          <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               🔍
             </span>
@@ -349,6 +358,21 @@ function App() {
               className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          >
+            <option value="all">All Statuses</option>
+
+            {columns.map((col) => (
+              <option key={col} value={col}>
+                {col}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Kanban Board */}
