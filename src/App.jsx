@@ -45,6 +45,8 @@ function App() {
     }, 2500);
   };
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   // Fill the form with the selected job when editing
   const handleEditJob = (job) => {
     setForm({
@@ -71,20 +73,16 @@ function App() {
 
     setJobs((currentJobs) =>
       currentJobs.map((job) =>
-        job.id === active.id
-          ? { ...job, status: newStatus }
-          : job
-      )
+        job.id === active.id ? { ...job, status: newStatus } : job,
+      ),
     );
   };
 
   // Delete a job
   const handleDeleteJob = (jobId) => {
-    setJobs((currentJobs) =>
-      currentJobs.filter((job) => job.id !== jobId)
-    );
+    setJobs((currentJobs) => currentJobs.filter((job) => job.id !== jobId));
 
-    showToast("Job deleted successfully")
+    showToast("Job deleted successfully");
 
     // If we were editing this job, reset the form
     if (editingJobId === jobId) {
@@ -150,11 +148,11 @@ function App() {
                 role: form.role.trim(),
                 status: form.status,
               }
-            : job
-        )
+            : job,
+        ),
       );
 
-      showToast("Job updated successfully")
+      showToast("Job updated successfully");
 
       setEditingJobId(null);
     }
@@ -176,18 +174,24 @@ function App() {
     handleCancelEdit();
   };
 
+  const filteredJobs = jobs.filter((job) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      job.company.toLowerCase().includes(search) ||
+      job.role.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
-
-      { toast && (
+      {toast && (
         <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-800 shadow-lg">
           {toast}
         </div>
       )}
 
-
       <div className="mx-auto max-w-7xl">
-
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -201,7 +205,6 @@ function App() {
 
         {/* Add / Edit Job Form */}
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-
           <div className="mb-5">
             <h2 className="text-xl font-bold text-gray-900">
               {editingJobId !== null ? "Edit Job" : "Add New Job"}
@@ -215,7 +218,6 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-
             {/* Company */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -247,9 +249,7 @@ function App() {
               />
 
               {errors.company && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.company}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.company}</p>
               )}
             </div>
 
@@ -284,9 +284,7 @@ function App() {
               />
 
               {errors.role && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.role}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.role}</p>
               )}
             </div>
 
@@ -317,7 +315,6 @@ function App() {
 
           {/* Buttons */}
           <div className="mt-6 flex justify-end gap-3">
-
             {editingJobId !== null && (
               <button
                 type="button"
@@ -338,6 +335,22 @@ function App() {
           </div>
         </div>
 
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
+
+            <input
+              type="text"
+              placeholder="Search by company or role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+        </div>
+
         {/* Kanban Board */}
         <DndContext onDragEnd={handleDragEnd}>
           <div className="flex gap-4 overflow-x-auto pb-4">
@@ -345,16 +358,13 @@ function App() {
               <Column
                 key={col}
                 column={col}
-                jobs={jobs.filter(
-                  (job) => job.status === col
-                )}
+                jobs={filteredJobs.filter((job) => job.status === col)}
                 onDelete={handleDeleteJob}
                 onEdit={handleEditJob}
               />
             ))}
           </div>
         </DndContext>
-
       </div>
     </div>
   );
