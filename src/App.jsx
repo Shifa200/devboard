@@ -15,7 +15,6 @@ const columns = [
 function App() {
   const [jobs, setJobs] = useState(() => {
     const savedJobs = localStorage.getItem("devboard-jobs");
-
     return savedJobs ? JSON.parse(savedJobs) : [];
   });
 
@@ -31,26 +30,28 @@ function App() {
 
   const [editingJobId, setEditingJobId] = useState(null);
 
-  const handleEditJob = (job) => {
-  setForm({
-    company: job.company,
-    role: job.role,
-    status: job.status,
-  });
-
-  setEditingJobId(job.id);
-
-  setErrors({
-    company: "",
-    role: "",
-  });
-};
-
   const [errors, setErrors] = useState({
     company: "",
     role: "",
   });
 
+  // Fill the form with the selected job when editing
+  const handleEditJob = (job) => {
+    setForm({
+      company: job.company,
+      role: job.role,
+      status: job.status,
+    });
+
+    setEditingJobId(job.id);
+
+    setErrors({
+      company: "",
+      role: "",
+    });
+  };
+
+  // Move a job to another column
   const handleDragEnd = ({ active, over }) => {
     if (!over) {
       return;
@@ -60,104 +61,74 @@ function App() {
 
     setJobs((currentJobs) =>
       currentJobs.map((job) =>
-        job.id === active.id ? { ...job, status: newStatus } : job,
-      ),
+        job.id === active.id
+          ? { ...job, status: newStatus }
+          : job
+      )
     );
   };
 
+  // Delete a job
   const handleDeleteJob = (jobId) => {
-  setJobs((currentJobs) =>
-    currentJobs.filter((job) => job.id !== jobId)
-   );
+    setJobs((currentJobs) =>
+      currentJobs.filter((job) => job.id !== jobId)
+    );
+
+    // If we were editing this job, reset the form
+    if (editingJobId === jobId) {
+      setEditingJobId(null);
+
+      setForm({
+        company: "",
+        role: "",
+        status: "wishlist",
+      });
+
+      setErrors({
+        company: "",
+        role: "",
+      });
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        DevBoard 🚀 Job Tracker
-      </h1>
-      <div className="mb-6 flex gap-3 items-center flex-wrap">
-        {/* Company */}
-        <div className="flex flex-col">
-          <input
-            type="text"
-            placeholder="Company"
-            value={form.company}
-            onChange={(e) => {
-              setForm({ ...form, company: e.target.value });
+  // Reset the form
+  const handleCancelEdit = () => {
+    setEditingJobId(null);
 
-              if (e.target.value.trim()) {
-                setErrors({ ...errors, company: "" });
-              }
-            }}
-            className={`border p-2 rounded ${
-              errors.company ? "border-red-500" : "border-gray-300"
-            }`}
-          />
+    setForm({
+      company: "",
+      role: "",
+      status: "wishlist",
+    });
 
-          {errors.company && (
-            <p className="text-red-500 text-sm mt-1">{errors.company}</p>
-          )}
-        </div>
+    setErrors({
+      company: "",
+      role: "",
+    });
+  };
 
-        {/* Role */}
-        <div className="flex flex-col">
-          <input
-            type="text"
-            placeholder="Job Role"
-            value={form.role}
-            onChange={(e) => {
-              setForm({ ...form, role: e.target.value });
+  // Add or update a job
+  const handleSubmit = () => {
+    const newErrors = {
+      company: "",
+      role: "",
+    };
 
-              if (e.target.value.trim()) {
-                setErrors({ ...errors, role: "" });
-              }
-            }}
-            className={`border p-2 rounded ${
-              errors.role ? "border-red-500" : "border-gray-300"
-            }`}
-          />
+    if (!form.company.trim()) {
+      newErrors.company = "Please enter company name.";
+    }
 
-          {errors.role && (
-            <p className="text-red-500 text-sm mt-1">{errors.role}</p>
-          )}
-        </div>
+    if (!form.role.trim()) {
+      newErrors.role = "Please enter job role.";
+    }
 
-        {/* Status */}
-        <select
-          value={form.status}
-          onChange={(e) => setForm({ ...form, status: e.target.value })}
-          className="border p-2 rounded"
-        >
-          {columns.map((col) => (
-            <option key={col} value={col}>
-              {col}
-            </option>
-          ))}
-        </select>
+    if (newErrors.company || newErrors.role) {
+      setErrors(newErrors);
+      return;
+    }
 
-        {/* Add button */}
-        <button
-          onClick={() => {
-            const newErrors = {
-              company: "",
-              role: "",
-            };
-
-            if (!form.company.trim()) {
-              newErrors.company = "Please enter company name.";
-            }
-
-            if (!form.role.trim()) {
-              newErrors.role = "Please enter job role.";
-            }
-
-            if (newErrors.company || newErrors.role) {
-              setErrors(newErrors);
-              return;
-            }
-            
-            if (editingJobId !== null) {
+    // Update existing job
+    if (editingJobId !== null) {
       setJobs((currentJobs) =>
         currentJobs.map((job) =>
           job.id === editingJobId
@@ -172,47 +143,195 @@ function App() {
       );
 
       setEditingJobId(null);
-    } else { 
+    }
+
+    // Add new job
+    else {
       const newJob = {
-              id: Date.now(),
-              company: form.company.trim(),
-              role: form.role.trim(),
-              status: form.status
-            };
+        id: Date.now(),
+        company: form.company.trim(),
+        role: form.role.trim(),
+        status: form.status,
+      };
 
-            setJobs((currentJobs) => [...currentJobs, newJob]);
-          }
-            setForm({
-              company: "",
-              role: "",
-              status: "wishlist",
-            });
+      setJobs((currentJobs) => [...currentJobs, newJob]);
+    }
 
-            setErrors({
-              company: "",
-              role: "",
-            });
-          }}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-            {editingJobId !== null ? "Update Job" : "Add Job"}
+    handleCancelEdit();
+  };
 
-        </button>
-      </div>
-      <DndContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto">
-          {columns.map((col) => (
-            <Column
-              key={col}
-              column={col}
-              jobs={jobs.filter((job) => job.status === col)}
-              onDelete={handleDeleteJob}
-              onEdit={handleEditJob}
+  return (
+    <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-7xl">
 
-            />
-          ))}
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            🚀 DevBoard Job Tracker
+          </h1>
+
+          <p className="mt-2 text-gray-500">
+            Track and manage your job applications in one place.
+          </p>
         </div>
-      </DndContext>
+
+        {/* Add / Edit Job Form */}
+        <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-gray-900">
+              {editingJobId !== null ? "Edit Job" : "Add New Job"}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {editingJobId !== null
+                ? "Update the details of this job application."
+                : "Track a new job application."}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+
+            {/* Company */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Company Name
+              </label>
+
+              <input
+                type="text"
+                placeholder="e.g. Google"
+                value={form.company}
+                onChange={(e) => {
+                  setForm({
+                    ...form,
+                    company: e.target.value,
+                  });
+
+                  if (e.target.value.trim()) {
+                    setErrors({
+                      ...errors,
+                      company: "",
+                    });
+                  }
+                }}
+                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${
+                  errors.company
+                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                }`}
+              />
+
+              {errors.company && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.company}
+                </p>
+              )}
+            </div>
+
+            {/* Job Role */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Job Role
+              </label>
+
+              <input
+                type="text"
+                placeholder="e.g. Frontend Developer"
+                value={form.role}
+                onChange={(e) => {
+                  setForm({
+                    ...form,
+                    role: e.target.value,
+                  });
+
+                  if (e.target.value.trim()) {
+                    setErrors({
+                      ...errors,
+                      role: "",
+                    });
+                  }
+                }}
+                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${
+                  errors.role
+                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                }`}
+              />
+
+              {errors.role && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.role}
+                </p>
+              )}
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Status
+              </label>
+
+              <select
+                value={form.status}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    status: e.target.value,
+                  })
+                }
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              >
+                {columns.map((col) => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-6 flex justify-end gap-3">
+
+            {editingJobId !== null && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            >
+              {editingJobId !== null ? "Update Job" : "Add Job"}
+            </button>
+          </div>
+        </div>
+
+        {/* Kanban Board */}
+        <DndContext onDragEnd={handleDragEnd}>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {columns.map((col) => (
+              <Column
+                key={col}
+                column={col}
+                jobs={jobs.filter(
+                  (job) => job.status === col
+                )}
+                onDelete={handleDeleteJob}
+                onEdit={handleEditJob}
+              />
+            ))}
+          </div>
+        </DndContext>
+
+      </div>
     </div>
   );
 }
