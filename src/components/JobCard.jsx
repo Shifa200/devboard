@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
-function JobCard({ job, onDelete }) {
+function JobCard({ job, onDelete, onEdit }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
@@ -53,7 +53,7 @@ function JobCard({ job, onDelete }) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          console.log("Edit job:", job);
+          onEdit(job);
           setMenuOpen(false);
         }}
         className="flex w-full items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"

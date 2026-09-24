@@ -29,6 +29,23 @@ function App() {
     status: "wishlist",
   });
 
+  const [editingJobId, setEditingJobId] = useState(null);
+
+  const handleEditJob = (job) => {
+  setForm({
+    company: job.company,
+    role: job.role,
+    status: job.status,
+  });
+
+  setEditingJobId(job.id);
+
+  setErrors({
+    company: "",
+    role: "",
+  });
+};
+
   const [errors, setErrors] = useState({
     company: "",
     role: "",
@@ -139,16 +156,32 @@ function App() {
               setErrors(newErrors);
               return;
             }
+            
+            if (editingJobId !== null) {
+      setJobs((currentJobs) =>
+        currentJobs.map((job) =>
+          job.id === editingJobId
+            ? {
+                ...job,
+                company: form.company.trim(),
+                role: form.role.trim(),
+                status: form.status,
+              }
+            : job
+        )
+      );
 
-            const newJob = {
+      setEditingJobId(null);
+    } else { 
+      const newJob = {
               id: Date.now(),
-              ...form,
               company: form.company.trim(),
               role: form.role.trim(),
+              status: form.status
             };
 
-            setJobs([...jobs, newJob]);
-
+            setJobs((currentJobs) => [...currentJobs, newJob]);
+          }
             setForm({
               company: "",
               role: "",
@@ -162,7 +195,8 @@ function App() {
           }}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          Add Job
+            {editingJobId !== null ? "Update Job" : "Add Job"}
+
         </button>
       </div>
       <DndContext onDragEnd={handleDragEnd}>
@@ -173,6 +207,8 @@ function App() {
               column={col}
               jobs={jobs.filter((job) => job.status === col)}
               onDelete={handleDeleteJob}
+              onEdit={handleEditJob}
+
             />
           ))}
         </div>
