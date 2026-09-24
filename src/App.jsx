@@ -35,6 +35,16 @@ function App() {
     role: "",
   });
 
+  const [toast, setToast] = useState("");
+
+  const showToast = (message) => {
+    setToast(message);
+
+    setTimeout(() => {
+      setToast("");
+    }, 2500);
+  };
+
   // Fill the form with the selected job when editing
   const handleEditJob = (job) => {
     setForm({
@@ -73,6 +83,8 @@ function App() {
     setJobs((currentJobs) =>
       currentJobs.filter((job) => job.id !== jobId)
     );
+
+    showToast("Job deleted successfully")
 
     // If we were editing this job, reset the form
     if (editingJobId === jobId) {
@@ -142,6 +154,8 @@ function App() {
         )
       );
 
+      showToast("Job updated successfully")
+
       setEditingJobId(null);
     }
 
@@ -155,6 +169,8 @@ function App() {
       };
 
       setJobs((currentJobs) => [...currentJobs, newJob]);
+
+      showToast("Job added successfully");
     }
 
     handleCancelEdit();
@@ -162,6 +178,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
+
+      { toast && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-800 shadow-lg">
+          {toast}
+        </div>
+      )}
+
+
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}
