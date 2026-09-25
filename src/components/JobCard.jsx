@@ -2,12 +2,18 @@ import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 function JobCard({ job, onDelete, onEdit }) {
+  const formattedDate = job.createdAt
+    ? new Date(job.createdAt).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform } =
-    useDraggable({
-      id: job.id,
-    });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: job.id,
+  });
 
   const style = transform
     ? {
@@ -24,16 +30,11 @@ function JobCard({ job, onDelete, onEdit }) {
       className="relative cursor-grab rounded-lg border bg-white p-4 shadow-sm"
     >
       <div className="flex items-start justify-between gap-3">
-
         {/* Job information */}
         <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900">
-            {job.company}
-          </h3>
+          <h3 className="font-semibold text-gray-900">{job.company}</h3>
 
-          <p className="mt-1 text-sm text-gray-500">
-            {job.role}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{job.role}</p>
 
           {/* Job URL */}
           {job.url && (
@@ -55,11 +56,16 @@ function JobCard({ job, onDelete, onEdit }) {
               📝 {job.notes}
             </p>
           )}
+
+          {formattedDate && (
+            <p className="mt-3 text-xs text-gray-400">
+              Applied {formattedDate}
+            </p>
+          )}
         </div>
 
         {/* Three-dot menu */}
         <div className="relative shrink-0">
-
           <button
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
@@ -100,7 +106,6 @@ function JobCard({ job, onDelete, onEdit }) {
               </button>
             </div>
           )}
-
         </div>
       </div>
     </div>
