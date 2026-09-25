@@ -176,36 +176,32 @@ function App() {
     handleCancelEdit();
   };
 
- const filteredJobs = jobs.filter((job) => {
-  const search = searchTerm.toLowerCase();
+  const filteredJobs = jobs.filter((job) => {
+    const search = searchTerm.toLowerCase();
 
-  const matchesSearch =
-    job.company.toLowerCase().includes(search) ||
-    job.role.toLowerCase().includes(search);
+    const matchesSearch =
+      job.company.toLowerCase().includes(search) ||
+      job.role.toLowerCase().includes(search);
 
-  const matchesStatus =
-    statusFilter === "all" ||
-    job.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || job.status === statusFilter;
 
-  return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus;
+  });
 
+  const totalJobs = jobs.length;
 
-});
+  const wishlistCount = jobs.filter((job) => job.status === "wishlist").length;
 
-const totalJobs = jobs.length;
+  const interviewCount = jobs.filter(
+    (job) => job.status === "interview",
+  ).length;
 
-const wishlistCount = jobs.filter(
-  (job) => job.status === "wishlist"
-).length;
+  const offerCount = jobs.filter((job) => job.status === "offer").length;
 
-const interviewCount = jobs.filter(
-  (job) => job.status === "interview"
-).length;
-
-const offerCount = jobs.filter(
-  (job) => job.status === "offer"
-).length;
-
+  const statusCounts = columns.map((column) => ({
+    status: column,
+    count: jobs.filter((job) => job.status === column).length,
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
@@ -228,52 +224,82 @@ const offerCount = jobs.filter(
         </div>
 
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {/* Total */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">
+              Total Applications
+            </p>
 
-  {/* Total */}
-  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-    <p className="text-sm font-medium text-gray-500">
-      Total Applications
-    </p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{totalJobs}</p>
+          </div>
 
-    <p className="mt-2 text-3xl font-bold text-gray-900">
-      {totalJobs}
-    </p>
-  </div>
+          {/* Wishlist */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">Wishlist</p>
 
-  {/* Wishlist */}
-  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-    <p className="text-sm font-medium text-gray-500">
-      Wishlist
-    </p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {wishlistCount}
+            </p>
+          </div>
 
-    <p className="mt-2 text-3xl font-bold text-gray-900">
-      {wishlistCount}
-    </p>
-  </div>
+          {/* Interviews */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">Interviews</p>
 
-  {/* Interviews */}
-  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-    <p className="text-sm font-medium text-gray-500">
-      Interviews
-    </p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {interviewCount}
+            </p>
+          </div>
 
-    <p className="mt-2 text-3xl font-bold text-gray-900">
-      {interviewCount}
-    </p>
-  </div>
+          {/* Offers */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">Offers</p>
 
-  {/* Offers */}
-  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-    <p className="text-sm font-medium text-gray-500">
-      Offers
-    </p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {offerCount}
+            </p>
+          </div>
+        </div>
 
-    <p className="mt-2 text-3xl font-bold text-gray-900">
-      {offerCount}
-    </p>
-  </div>
+        <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="mb-5">
+            <h2 className="text-lg font-bold text-gray-900">
+              Application Status
+            </h2>
 
-</div>
+            <p className="mt-1 text-sm text-gray-500">
+              Overview of your applications by status.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {statusCounts.map((item) => (
+              <div key={item.status}>
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="text-sm font-medium capitalize text-gray-700">
+                    {item.status}
+                  </span>
+
+                  <span className="text-sm font-semibold text-gray-900">
+                    {item.count}
+                  </span>
+                </div>
+
+                <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                    style={{
+                      width:
+                        totalJobs === 0
+                          ? "0%"
+                          : `${(item.count / totalJobs) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Add / Edit Job Form */}
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
