@@ -3,6 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 
 function JobCard({ job, onDelete, onEdit }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({
       id: job.id,
@@ -20,10 +21,12 @@ function JobCard({ job, onDelete, onEdit }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="relative rounded-lg border bg-white p-4 shadow-sm cursor-grab"
+      className="relative cursor-grab rounded-lg border bg-white p-4 shadow-sm"
     >
       <div className="flex items-start justify-between gap-3">
-        <div>
+
+        {/* Job information */}
+        <div className="min-w-0">
           <h3 className="font-semibold text-gray-900">
             {job.company}
           </h3>
@@ -31,50 +34,74 @@ function JobCard({ job, onDelete, onEdit }) {
           <p className="mt-1 text-sm text-gray-500">
             {job.role}
           </p>
+
+          {/* Job URL */}
+          {job.url && (
+            <a
+              href={job.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+            >
+              🔗 View Job
+            </a>
+          )}
+
+          {/* Notes */}
+          {job.notes && (
+            <p className="mt-3 line-clamp-2 text-xs text-gray-500">
+              📝 {job.notes}
+            </p>
+          )}
         </div>
-        <div className="relative">
-  <button
-    onPointerDown={(e) => e.stopPropagation()}
-    onClick={(e) => {
-      e.stopPropagation();
-      setMenuOpen(!menuOpen);
-    }}
-    className="flex h-8 w-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-900 text-xl font-bold transition"
-    title="More options"
-  >
-    ⋮
-  </button>
 
-  {menuOpen && (
-    <div
-      className="absolute right-0 top-9 z-50 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
-      onPointerDown={(e) => e.stopPropagation()}
-    >
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onEdit(job);
-          setMenuOpen(false);
-        }}
-        className="flex w-full items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-      >
-        ✏️ Edit
-      </button>
+        {/* Three-dot menu */}
+        <div className="relative shrink-0">
 
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(job.id);
-          setMenuOpen(false);
-        }}
-        className="flex w-full items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50"
-      >
-        🗑 Delete
-      </button>
-    </div>
-  )}
-</div>
-        
+          <button
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(!menuOpen);
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-xl font-bold text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+            title="More options"
+          >
+            ⋮
+          </button>
+
+          {menuOpen && (
+            <div
+              className="absolute right-0 top-9 z-50 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(job);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(job.id);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                🗑 Delete
+              </button>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );

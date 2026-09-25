@@ -26,6 +26,8 @@ function App() {
     company: "",
     role: "",
     status: "wishlist",
+    url: "",
+    notes: "",
   });
 
   const [editingJobId, setEditingJobId] = useState(null);
@@ -55,6 +57,8 @@ function App() {
       company: job.company,
       role: job.role,
       status: job.status,
+      url: job.url || "",
+      notes: job.notes || "",
     });
 
     setEditingJobId(job.id);
@@ -111,6 +115,8 @@ function App() {
       company: "",
       role: "",
       status: "wishlist",
+      url: "",
+      notes: "",
     });
 
     setErrors({
@@ -149,6 +155,8 @@ function App() {
                 company: form.company.trim(),
                 role: form.role.trim(),
                 status: form.status,
+                url: form.url.trim(),
+                notes: form.notes.trim(),
               }
             : job,
         ),
@@ -166,6 +174,8 @@ function App() {
         company: form.company.trim(),
         role: form.role.trim(),
         status: form.status,
+        url: form.url.trim(),
+        notes: form.notes.trim(),
         createdAt: new Date().toISOString(),
       };
 
@@ -216,27 +226,25 @@ function App() {
 
   const now = new Date();
 
-const startOfWeek = new Date(now);
+  const startOfWeek = new Date(now);
 
-const day = startOfWeek.getDay();
+  const day = startOfWeek.getDay();
 
-const difference = day === 0 ? 6 : day - 1;
+  const difference = day === 0 ? 6 : day - 1;
 
-startOfWeek.setDate(
-  startOfWeek.getDate() - difference
-);
+  startOfWeek.setDate(startOfWeek.getDate() - difference);
 
-startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setHours(0, 0, 0, 0);
 
-const applicationsThisWeek = jobs.filter((job) => {
-  if (!job.createdAt) {
-    return false;
-  }
+  const applicationsThisWeek = jobs.filter((job) => {
+    if (!job.createdAt) {
+      return false;
+    }
 
-  const createdDate = new Date(job.createdAt);
+    const createdDate = new Date(job.createdAt);
 
-  return createdDate >= startOfWeek;
-}).length;
+    return createdDate >= startOfWeek;
+  }).length;
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
@@ -309,18 +317,14 @@ const applicationsThisWeek = jobs.filter((job) => {
           </div>
 
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-  <p className="text-sm font-medium text-gray-500">
-    This Week
-  </p>
+            <p className="text-sm font-medium text-gray-500">This Week</p>
 
-  <p className="mt-2 text-3xl font-bold text-gray-900">
-    {applicationsThisWeek}
-  </p>
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {applicationsThisWeek}
+            </p>
 
-  <p className="mt-1 text-xs text-gray-400">
-    Applications
-  </p>
-</div>  
+            <p className="mt-1 text-xs text-gray-400">Applications</p>
+          </div>
         </div>
 
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -377,7 +381,7 @@ const applicationsThisWeek = jobs.filter((job) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {/* Company */}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -470,6 +474,46 @@ const applicationsThisWeek = jobs.filter((job) => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Job URL */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Job URL
+              </label>
+
+              <input
+                type="url"
+                placeholder="https://..."
+                value={form.url}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    url: e.target.value,
+                  })
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Notes
+              </label>
+
+              <textarea
+                placeholder="Add notes about this application..."
+                value={form.notes}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    notes: e.target.value,
+                  })
+                }
+                rows="3"
+                className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
             </div>
           </div>
 
