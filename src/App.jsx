@@ -166,6 +166,7 @@ function App() {
         company: form.company.trim(),
         role: form.role.trim(),
         status: form.status,
+        createdAt: new Date().toISOString(),
       };
 
       setJobs((currentJobs) => [...currentJobs, newJob]);
@@ -213,6 +214,30 @@ function App() {
   const responseRate =
     totalJobs === 0 ? 0 : Math.round((responseCount / totalJobs) * 100);
 
+  const now = new Date();
+
+const startOfWeek = new Date(now);
+
+const day = startOfWeek.getDay();
+
+const difference = day === 0 ? 6 : day - 1;
+
+startOfWeek.setDate(
+  startOfWeek.getDate() - difference
+);
+
+startOfWeek.setHours(0, 0, 0, 0);
+
+const applicationsThisWeek = jobs.filter((job) => {
+  if (!job.createdAt) {
+    return false;
+  }
+
+  const createdDate = new Date(job.createdAt);
+
+  return createdDate >= startOfWeek;
+}).length;
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       {toast && (
@@ -233,7 +258,7 @@ function App() {
           </p>
         </div>
 
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-6">
           {/* Total */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
@@ -282,6 +307,20 @@ function App() {
               {responseCount !== 1 ? "s" : ""}
             </p>
           </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+  <p className="text-sm font-medium text-gray-500">
+    This Week
+  </p>
+
+  <p className="mt-2 text-3xl font-bold text-gray-900">
+    {applicationsThisWeek}
+  </p>
+
+  <p className="mt-1 text-xs text-gray-400">
+    Applications
+  </p>
+</div>  
         </div>
 
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
