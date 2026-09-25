@@ -203,6 +203,16 @@ function App() {
     count: jobs.filter((job) => job.status === column).length,
   }));
 
+  const responseCount = jobs.filter(
+    (job) =>
+      job.status === "interview" ||
+      job.status === "offer" ||
+      job.status === "rejected",
+  ).length;
+
+  const responseRate =
+    totalJobs === 0 ? 0 : Math.round((responseCount / totalJobs) * 100);
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       {toast && (
@@ -223,7 +233,7 @@ function App() {
           </p>
         </div>
 
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">
           {/* Total */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <p className="text-sm font-medium text-gray-500">
@@ -257,6 +267,19 @@ function App() {
 
             <p className="mt-2 text-3xl font-bold text-gray-900">
               {offerCount}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">Response Rate</p>
+
+            <p className="mt-2 text-3xl font-bold text-gray-900">
+              {responseRate}%
+            </p>
+
+            <p className="mt-1 text-xs text-gray-400">
+              {responseCount} response
+              {responseCount !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
