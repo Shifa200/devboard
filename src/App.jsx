@@ -189,8 +189,24 @@ function App() {
 
   return matchesSearch && matchesStatus;
 
-  
+
 });
+
+const totalJobs = jobs.length;
+
+const wishlistCount = jobs.filter(
+  (job) => job.status === "wishlist"
+).length;
+
+const interviewCount = jobs.filter(
+  (job) => job.status === "interview"
+).length;
+
+const offerCount = jobs.filter(
+  (job) => job.status === "offer"
+).length;
+
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       {toast && (
@@ -210,6 +226,54 @@ function App() {
             Track and manage your job applications in one place.
           </p>
         </div>
+
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+
+  {/* Total */}
+  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <p className="text-sm font-medium text-gray-500">
+      Total Applications
+    </p>
+
+    <p className="mt-2 text-3xl font-bold text-gray-900">
+      {totalJobs}
+    </p>
+  </div>
+
+  {/* Wishlist */}
+  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <p className="text-sm font-medium text-gray-500">
+      Wishlist
+    </p>
+
+    <p className="mt-2 text-3xl font-bold text-gray-900">
+      {wishlistCount}
+    </p>
+  </div>
+
+  {/* Interviews */}
+  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <p className="text-sm font-medium text-gray-500">
+      Interviews
+    </p>
+
+    <p className="mt-2 text-3xl font-bold text-gray-900">
+      {interviewCount}
+    </p>
+  </div>
+
+  {/* Offers */}
+  <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <p className="text-sm font-medium text-gray-500">
+      Offers
+    </p>
+
+    <p className="mt-2 text-3xl font-bold text-gray-900">
+      {offerCount}
+    </p>
+  </div>
+
+</div>
 
         {/* Add / Edit Job Form */}
         <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
