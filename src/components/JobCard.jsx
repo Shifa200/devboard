@@ -35,6 +35,26 @@ function JobCard({ job, onDelete, onEdit }) {
           <h3 className="font-semibold text-gray-900">{job.company}</h3>
 
           <p className="mt-1 text-sm text-gray-500">{job.role}</p>
+          <span
+            className={`mt-3 inline-block rounded-full px-2.5 py-1 text-xs font-medium ${
+              job.status === "wishlist"
+                ? "bg-gray-100 text-gray-700"
+                : job.status === "applied"
+                  ? "bg-blue-100 text-blue-700"
+                  : job.status === "online assessment"
+                    ? "bg-purple-100 text-purple-700"
+                    : job.status === "interview"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : job.status === "offer"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+            }`}
+          >
+            {job.status
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")}
+          </span>
 
           {/* Job URL */}
           {job.url && (
