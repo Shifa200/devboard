@@ -2,18 +2,12 @@ import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 function JobCard({ job, onDelete, onEdit }) {
-  const formattedDate = job.createdAt
-    ? new Date(job.createdAt).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : null;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: job.id,
-  });
+  const { attributes, listeners, setNodeRef, transform } =
+    useDraggable({
+      id: job.id,
+    });
 
   const style = transform
     ? {
@@ -26,35 +20,28 @@ function JobCard({ job, onDelete, onEdit }) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className="relative cursor-grab rounded-lg border bg-white p-4 shadow-sm"
+      className="relative rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
     >
-      <div className="flex items-start justify-between gap-3">
-        {/* Job information */}
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900">{job.company}</h3>
+      <div className="flex items-start gap-3">
+        
+        {/* Drag Handle */}
+        <button
+          {...listeners}
+          className="mt-1 cursor-grab touch-none text-slate-400 hover:text-slate-700 active:cursor-grabbing"
+          title="Drag job"
+        >
+          ⠿
+        </button>
 
-          <p className="mt-1 text-sm text-gray-500">{job.role}</p>
-          <span
-            className={`mt-3 inline-block rounded-full px-2.5 py-1 text-xs font-medium ${
-              job.status === "wishlist"
-                ? "bg-gray-100 text-gray-700"
-                : job.status === "applied"
-                  ? "bg-blue-100 text-blue-700"
-                  : job.status === "online assessment"
-                    ? "bg-purple-100 text-purple-700"
-                    : job.status === "interview"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : job.status === "offer"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-            }`}
-          >
-            {job.status
-              .split(" ")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ")}
-          </span>
+        {/* Job Information */}
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-semibold text-slate-900">
+            {job.company}
+          </h3>
+
+          <p className="mt-1 truncate text-sm text-slate-500">
+            {job.role}
+          </p>
 
           {/* Job URL */}
           {job.url && (
@@ -64,7 +51,7 @@ function JobCard({ job, onDelete, onEdit }) {
               rel="noopener noreferrer"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => e.stopPropagation()}
-              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+              className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
             >
               🔗 View Job
             </a>
@@ -72,27 +59,21 @@ function JobCard({ job, onDelete, onEdit }) {
 
           {/* Notes */}
           {job.notes && (
-            <p className="mt-3 line-clamp-2 text-xs text-gray-500">
+            <p className="mt-2 line-clamp-2 text-xs text-slate-500">
               📝 {job.notes}
-            </p>
-          )}
-
-          {formattedDate && (
-            <p className="mt-3 text-xs text-gray-400">
-              Applied {formattedDate}
             </p>
           )}
         </div>
 
-        {/* Three-dot menu */}
+        {/* Three Dot Menu */}
         <div className="relative shrink-0">
           <button
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
-              setMenuOpen(!menuOpen);
+              setMenuOpen((current) => !current);
             }}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-xl font-bold text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-xl font-bold leading-none text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
             title="More options"
           >
             ⋮
@@ -100,7 +81,7 @@ function JobCard({ job, onDelete, onEdit }) {
 
           {menuOpen && (
             <div
-              className="absolute right-0 top-9 z-50 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+              className="absolute right-0 top-9 z-50 w-32 overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
               onPointerDown={(e) => e.stopPropagation()}
             >
               <button
@@ -109,7 +90,7 @@ function JobCard({ job, onDelete, onEdit }) {
                   onEdit(job);
                   setMenuOpen(false);
                 }}
-                className="flex w-full items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
               >
                 ✏️ Edit
               </button>
@@ -120,7 +101,7 @@ function JobCard({ job, onDelete, onEdit }) {
                   onDelete(job.id);
                   setMenuOpen(false);
                 }}
-                className="flex w-full items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
               >
                 🗑 Delete
               </button>

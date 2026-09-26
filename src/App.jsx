@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import Column from "./components/Column";
+import { Building2, BriefcaseBusiness, Tag, Plus, Search, Link, SquareText } from "lucide-react";
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -247,7 +248,7 @@ function App() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
+    <div className="min-h-screen bg-slate-50 px-6 py-8 md:px-8 text-slate-900">
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-800 shadow-lg">
           {toast}
@@ -256,14 +257,26 @@ function App() {
 
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            🚀 DevBoard Job Tracker
-          </h1>
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="text-4xl">🚀</div>
 
-          <p className="mt-2 text-gray-500">
-            Track and manage your job applications in one place.
-          </p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              DevBoard
+            </h1>
+
+            <span className="text-3xl font-medium text-slate-600">
+              Job Tracker
+            </span>
+          </div>
+
+          <div className="hidden items-center gap-6 text-sm font-medium text-slate-500 md:flex">
+            <span>Track</span>
+            <span>•</span>
+            <span>Organize</span>
+            <span>•</span>
+            <span>Achieve</span>
+          </div>
         </div>
 
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-6">
@@ -368,9 +381,9 @@ function App() {
         </div>
 
         {/* Add / Edit Job Form */}
-        <div className="mb-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-5">
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-slate-900">
               {editingJobId !== null ? "Edit Job" : "Add New Job"}
             </h2>
 
@@ -384,7 +397,8 @@ function App() {
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {/* Company */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Building2 size={16} />
                 Company Name
               </label>
 
@@ -405,7 +419,7 @@ function App() {
                     });
                   }
                 }}
-                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition ${
+                className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none placeholder:text -slate-400 transition ${
                   errors.company
                     ? "border-red-500 focus:ring-2 focus:ring-red-100"
                     : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -413,13 +427,14 @@ function App() {
               />
 
               {errors.company && (
-                <p className="mt-1.5 text-xs text-red-500">{errors.company}</p>
+                <p className="mt-1.5 text-xs text-red-500">⚠ {errors.company}</p>
               )}
             </div>
 
             {/* Job Role */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                 <BriefcaseBusiness size={16} />
                 Job Role
               </label>
 
@@ -448,14 +463,16 @@ function App() {
               />
 
               {errors.role && (
-                <p className="mt-1.5 text-xs text-red-500">{errors.role}</p>
+                <p className="mt-1.5 text-xs text-red-500">⚠ {errors.role}</p>
               )}
             </div>
 
             {/* Status */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Tag size={16} />
                 Status
+          
               </label>
 
               <select
@@ -478,7 +495,8 @@ function App() {
 
             {/* Job URL */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Link size={16} />
                 Job URL
               </label>
 
@@ -498,7 +516,8 @@ function App() {
 
             {/* Notes */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+               <SquareText size={16} />
                 Notes
               </label>
 
@@ -532,8 +551,9 @@ function App() {
             <button
               type="button"
               onClick={handleSubmit}
-              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md active:scale-[0.98]"
             >
+              <Plus className="h-5 w-5" />
               {editingJobId !== null ? "Update Job" : "Add Job"}
             </button>
           </div>
@@ -543,7 +563,7 @@ function App() {
           {/* Search */}
           <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              🔍
+              <Search size={18} />
             </span>
 
             <input
