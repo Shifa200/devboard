@@ -1,8 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 function JobCard({ job, onDelete, onEdit }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+  const handleClickOutside = () => {
+    if (menuOpen) {
+      setMenuOpen(false);
+    }
+  };
+
+  const handleEscape = (e) => {
+    if (e.key === "Escape") {
+      setMenuOpen(false);
+    }
+  };
+
+  document.addEventListener("click", handleClickOutside);
+  document.addEventListener("keydown", handleEscape);
+
+  return () => {
+    document.removeEventListener("click", handleClickOutside);
+    document.removeEventListener("keydown", handleEscape);
+  };
+}, [menuOpen]);
 
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({

@@ -75,6 +75,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [statusFilter, setStatusFilter] = useState("all");
+  
 
   // Fill the form with the selected job when editing
   const handleEditJob = (job) => {
