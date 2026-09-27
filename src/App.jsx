@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import Column from "./components/Column";
-import { Building2, BriefcaseBusiness, Tag, Plus, Search, Link, SquareText } from "lucide-react";
+import {
+  Building2,
+  BriefcaseBusiness,
+  Tag,
+  Plus,
+  Search,
+  Link,
+  SquareText,
+  CheckCircle2,
+  Trash2,
+  RefreshCw,
+  X,
+} from "lucide-react";
 
 // Board columns used to organize job applications by status
 const columns = [
@@ -38,13 +50,25 @@ function App() {
     role: "",
   });
 
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
 
-  const showToast = (message) => {
-    setToast(message);
+  const showToast = (type, message) => {
+    setToast({
+      show: true,
+      type,
+      message,
+    });
 
     setTimeout(() => {
-      setToast("");
+      setToast({
+        show: false,
+        type: "",
+        message: "",
+      });
     }, 2500);
   };
 
@@ -89,7 +113,7 @@ function App() {
   const handleDeleteJob = (jobId) => {
     setJobs((currentJobs) => currentJobs.filter((job) => job.id !== jobId));
 
-    showToast("Job deleted successfully");
+    showToast("delete", "Job deleted successfully");
 
     // If we were editing this job, reset the form
     if (editingJobId === jobId) {
@@ -163,7 +187,7 @@ function App() {
         ),
       );
 
-      showToast("Job updated successfully");
+      showToast("update", "Job updated successfully");
 
       setEditingJobId(null);
     }
@@ -182,7 +206,7 @@ function App() {
 
       setJobs((currentJobs) => [...currentJobs, newJob]);
 
-      showToast("Job added successfully");
+      showToast("success", "Job added successfully");
     }
 
     handleCancelEdit();
@@ -249,9 +273,53 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 px-6 py-8 md:px-8 text-slate-900">
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-800 shadow-lg">
-          {toast}
+      {toast.show && (
+        <div
+          className={`fixed bottom-6 left-6 right-6 z-50 mx-auto max-w-7xl rounded-xl border px-4 py-3 shadow-lg ${
+            toast.type === "success"
+              ? "border-green-200 bg-green-50 text-green-800"
+              : toast.type === "delete"
+                ? "border-red-200 bg-red-50 text-red-800"
+                : "border-yellow-200 bg-yellow-50 text-yellow-800"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {/* Icon */}
+              <div
+                className={`flex h-9 w-9 items-center justify-center rounded-full ${
+                  toast.type === "success"
+                    ? "bg-green-500 text-white"
+                    : toast.type === "delete"
+                      ? "bg-red-500 text-white"
+                      : "bg-yellow-500 text-white"
+                }`}
+              >
+                {toast.type === "success" && <CheckCircle2 size={20} />}
+                {toast.type === "delete" && <Trash2 size={20} />}
+                {toast.type === "update" && <RefreshCw size={20} />}
+              </div>
+
+              {/* Message */}
+              <p className="text-sm font-semibold">{toast.message}</p>
+            </div>
+
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={() =>
+                setToast({
+                  show: false,
+                  type: "",
+                  message: "",
+                })
+              }
+              className="rounded-md p-1 transition hover:bg-black/5"
+              aria-label="Close notification"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
       )}
 
@@ -427,14 +495,16 @@ function App() {
               />
 
               {errors.company && (
-                <p className="mt-1.5 text-xs text-red-500">⚠ {errors.company}</p>
+                <p className="mt-1.5 text-xs text-red-500">
+                  ⚠ {errors.company}
+                </p>
               )}
             </div>
 
             {/* Job Role */}
             <div>
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-                 <BriefcaseBusiness size={16} />
+                <BriefcaseBusiness size={16} />
                 Job Role
               </label>
 
@@ -472,7 +542,6 @@ function App() {
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Tag size={16} />
                 Status
-          
               </label>
 
               <select
@@ -517,7 +586,7 @@ function App() {
             {/* Notes */}
             <div>
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-               <SquareText size={16} />
+                <SquareText size={16} />
                 Notes
               </label>
 
